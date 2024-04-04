@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import userRouter from './routes/users';
 import cartRouter from './routes/cards';
+import { createUser } from './constrollers/user';
 
 const { PORT = 3000 } = process.env;
 
@@ -24,13 +25,14 @@ app.use((req: any, res: Response, next) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-  res.send(
-    `<html>
-    <body>
-        <p>Ответ на сигнал из далёкого космоса</p>
-    </body>
-    </html>`,
-  );
+  createUser(req, res);
+  // res.send(
+  //   `<html>
+  //   <body>
+  //       <p>Ответ на сигнал из далёкого космоса</p>
+  //   </body>
+  //   </html>`,
+  // );
 });
 
 app.listen(PORT, () => {

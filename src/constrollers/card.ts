@@ -6,13 +6,23 @@ const createCard = (req: any, res: Response) => {
 
   return Card.create({ name, link, owner: req.user._id })
     .then((cart) => res.send({ data: cart }))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .catch((err) => {
+      if (err._message.includes('validation')) {
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      }
+      return res.status(500).send({ message: `Произошла ошибка ${err}` });
+    });
 };
 
 const deleteCard = (req: any, res: Response) => {
   const { cardId } = req.params;
   return Card.findByIdAndDelete(cardId)
-    .then((cart) => res.send({ data: cart }))
+    .then((cart) => {
+      if (!cart) {
+        return res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
+      }
+      return res.send({ data: cart });
+    })
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
 
@@ -27,8 +37,18 @@ const likeCard = (req: any, res: Response) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((cart) => res.send({ data: cart }))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .then((cart) => {
+      if (!cart) {
+        return res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
+      }
+      return res.send({ data: cart });
+    })
+    .catch((err) => {
+      if (err._message.includes('validation')) {
+        return res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' });
+      }
+      return res.status(500).send({ message: `Произошла ошибка ${err}` });
+    });
 };
 
 const dislikeCard = (req: any, res: Response) => {
@@ -38,8 +58,18 @@ const dislikeCard = (req: any, res: Response) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((cart) => res.send({ data: cart }))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .then((cart) => {
+      if (!cart) {
+        return res.status(404).send({ message: 'Переданы некорректные данные для снятии лайка.' });
+      }
+      return res.send({ data: cart });
+    })
+    .catch((err) => {
+      if (err._message.includes('validation')) {
+        return res.status(400).send({ message: 'Переданы некорректные данные для снятии лайка.' });
+      }
+      return res.status(500).send({ message: `Произошла ошибка ${err}` });
+    });
 };
 
 export {
