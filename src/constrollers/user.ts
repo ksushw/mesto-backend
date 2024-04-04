@@ -19,4 +19,20 @@ const findUser = (req: Request, res: Response) => {
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
 
-export { createUser, readUsers, findUser };
+const refreshUser = (req: any, res: Response) => {
+  const { name, about } = req.body;
+  return User.findByIdAndUpdate(req.user._id, { name, about })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+};
+
+const refreshAvatar = (req: any, res: Response) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(req.user._id, { avatar })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+};
+
+export {
+  createUser, readUsers, findUser, refreshUser, refreshAvatar,
+};
