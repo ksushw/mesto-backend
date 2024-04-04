@@ -1,9 +1,27 @@
-import http from 'http';
+import express, { Request, Response } from 'express';
 
-const server = http.createServer((request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/plain' });
-  response.write('Hello, ');
-  response.end();
+import mongoose from 'mongoose';
+
+import userRouter from './routes/users';
+
+const { PORT = 3000 } = process.env;
+
+const app = express();
+
+mongoose.connect('mongodb://127.0.0.1:27017/mydb');
+
+app.use('/users', userRouter);
+
+app.get('/', (req: Request, res: Response) => {
+  res.send(
+    `<html>
+    <body>
+        <p>Ответ на сигнал из далёкого космоса</p>
+    </body>
+    </html>`,
+  );
 });
 
-server.listen(3000);
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+});

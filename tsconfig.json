@@ -19,7 +19,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/constrollers/user.ts"  ],
   "exclude": [
     "node_modules"
   ],
